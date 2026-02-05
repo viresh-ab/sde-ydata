@@ -1,0 +1,6 @@
+streamlit
+pandas
+numpy
+ydata-synthetic
+torch
+scikit-learn
