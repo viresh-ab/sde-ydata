@@ -1,6 +1,6 @@
 streamlit
 pandas
 numpy
-ydata-synthetic
-torch
 scikit-learn
+ydata-synthetic
+torch --index-url https://download.pytorch.org/whl/cpu
