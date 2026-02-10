@@ -1,28 +1,26 @@
 import pandas as pd
+from ydata_synthetic.synthesizers import ModelParameters, TrainParameters
 from ydata_synthetic.synthesizers.regular import RegularSynthesizer
-from ydata_synthetic.preprocessing.regular.processor import RegularDataProcessor
 
 
 def generate_ydata(df: pd.DataFrame, rows: int, epochs: int):
 
-    num_cols = df.select_dtypes(include=["int64","float64"]).columns.tolist()
-    cat_cols = df.select_dtypes(include=["object","category"]).columns.tolist()
+    num_cols = df.select_dtypes(include=["int64", "float64"]).columns.tolist()
+    cat_cols = df.select_dtypes(include=["object", "category", "bool"]).columns.tolist()
 
-    processor = RegularDataProcessor(
-        num_cols=num_cols,
-        cat_cols=cat_cols
+    model_params = ModelParameters(
+        batch_size=100,
+        lr=2e-4,
+        betas=(0.5, 0.9)
     )
-
-    data = processor.fit_transform(df)
 
     model = RegularSynthesizer(
         modelname="ctgan",
-        epochs=epochs,
-        batch_size=128
+        model_parameters=model_params
     )
 
-    model.fit(data)
+    train_args = TrainParameters(epochs=epochs)
 
-    synth = model.sample(rows)
+    model.fit(df, train_args, num_cols=num_cols, cat_cols=cat_cols)
 
-    return processor.inverse_transform(synth)
+    return model.sample(rows)
